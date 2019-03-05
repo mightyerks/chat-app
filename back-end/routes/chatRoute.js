@@ -1,17 +1,30 @@
-// var express = require('express');
-// var customerRoute = express.Router();
-// var customer = require('../models/customer');
+var express = require('express');
+var chatRoute = express.Router();
+var Message = require('../models/chat');
+// socket.io
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-//   //get customer data
-//   customerRoute.route('/').get(function (req, res) {
-//     customer.find(function (err, customers){
-//      if(err){
-//        console.log(err);
-//      }
-//      else {
-//        res.json(customers);
-//      }
-//    });
-//  });
+chatRoute.get('/', (req, res) => {
+    res.status(200).json({ message: 'Connected!' });
+});
 
-//  module.exports = customerRoute;
+chatRoute.get('/messages', (req, res) => {
+    Message.find({},(err, messages)=> {
+        res.send(messages);
+    })
+});
+
+chatRoute.route('/messages/:id').get((req, res) => {
+    var user = req.params.user
+    Message.find({name: user},(err, messages)=> {
+        res.send(messages);
+    })
+});
+
+
+
+module.exports = chatRoute;
+
+  
